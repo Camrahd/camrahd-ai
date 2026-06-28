@@ -15,7 +15,7 @@ chromadb:
  collection_name: codebase
 
 qdrant:
- collection_name: sample_project1
+ collection_name: sample_project2
 
 rag:
  mode: hybrid           # semantic | hybrid
@@ -25,6 +25,8 @@ vector_store:
  provider: qdrant
  retrieval_mode: hybrid  # dense | sparse | hybrid
 
+memory:
+ db_path: .memory/memory.db
 
 elasticsearch:
  url: http://localhost:9200
