@@ -4,9 +4,9 @@ from langchain.agents.middleware import SummarizationMiddleware
 from pathlib import Path
 
 
-from educosys_claude.config import config
-from educosys_claude.llm.factory import get_llm
-from educosys_claude.observability.logger import get_logger
+from Dharmas_claude.config import config
+from Dharmas_claude.llm.factory import get_llm
+from Dharmas_claude.observability.logger import get_logger
 
 
 logger = get_logger(__name__)

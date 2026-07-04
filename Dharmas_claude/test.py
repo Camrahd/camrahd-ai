@@ -13,11 +13,11 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-from educosys_claude.config import config
-from educosys_claude.context.indexers.factory import get_indexer, get_index_inspector
-from educosys_claude.llm.factory import get_llm, get_embedder
-from educosys_claude.agent.orchestrator import handle_query
-from educosys_claude.observability.logging import get_logger
+from Dharmas_claude.config import config
+from Dharmas_claude.context.indexers.factory import get_indexer, get_index_inspector
+from Dharmas_claude.llm.factory import get_llm, get_embedder
+from Dharmas_claude.agent.orchestrator import handle_query
+from Dharmas_claude.observability.logging import get_logger
 
 # Load .env before anything else (same as main.py)
 load_dotenv(Path(__file__).parent.parent / ".env")

@@ -1,8 +1,8 @@
 from langchain.agents import create_agent
-from educosys_claude.llm.factory import get_llm
-from educosys_claude.agent.tools import search_codebase
-from educosys_claude.memory.short_term import get_checkpointer, get_summarization_middleware
-from educosys_claude.observability.logger import get_logger
+from Dharmas_claude.llm.factory import get_llm
+from Dharmas_claude.agent.tools import search_codebase
+from Dharmas_claude.memory.short_term import get_checkpointer, get_summarization_middleware
+from Dharmas_claude.observability.logger import get_logger
 
 
 logger = get_logger(__name__)
