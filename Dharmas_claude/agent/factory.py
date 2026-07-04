@@ -1,10 +1,8 @@
 from langchain.agents import create_agent
-
-
-from Dharmas_claude.llm.factory import get_llm
-from Dharmas_claude.agent.tools import search_codebase
-from Dharmas_claude.memory.short_term import get_checkpointer
-from Dharmas_claude.observability.logger import get_logger
+from educosys_claude.llm.factory import get_llm
+from educosys_claude.agent.tools import search_codebase
+from educosys_claude.memory.short_term import get_checkpointer, get_summarization_middleware
+from educosys_claude.observability.logger import get_logger
 
 
 logger = get_logger(__name__)
@@ -21,6 +19,7 @@ def build_agent():
    llm = get_llm()
    tools = [search_codebase]
    checkpointer = get_checkpointer()
+   middleware = get_summarization_middleware()
 
 
    return create_agent(
@@ -28,4 +27,5 @@ def build_agent():
        tools=tools,
        system_prompt=SYSTEM_PROMPT,
        checkpointer=checkpointer,
+       middleware=[middleware],
    )
