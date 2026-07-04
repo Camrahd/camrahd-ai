@@ -5,13 +5,6 @@ from Dharmas_claude.llm.factory import get_llm
 from Dharmas_claude.agent.tools import search_codebase
 from Dharmas_claude.observability.logger import get_logger
 from Dharmas_claude.tools.terminal_tools import run_command, run_in_directory
-from Dharmas_claude.tools.filesystem_tools import (
-   read_file,
-   write_file,
-   append_file,
-   list_directory,
-   file_exists,
-)
 from Dharmas_claude.mcp.mcp_client import get_mcp_tools
 
 
@@ -34,11 +27,6 @@ async def build_agent(checkpointer):
        search_codebase,
        run_command,
        run_in_directory,
-       read_file,
-       write_file,
-       append_file,
-       list_directory,
-       file_exists,
        *mcp_tools,
    ]
 

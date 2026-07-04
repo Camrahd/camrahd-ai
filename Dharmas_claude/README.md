@@ -15,6 +15,17 @@ Indexers process and store code data for efficient retrieval:
 - **Semantic Chroma Indexer**: Processes code files into embeddings stored within ChromaDB.
 - **Semantic Qdrant Indexer**: Converts code files into embeddings, managed via QdrantVectorStore.
 
+## MCP Integration
+Dharmas Claude connects to multiple configured MCP (Multilingual Code Processing) servers to extend its capabilities by loading additional tools.
+
+### MCP Client
+- **Functionality**: Connects to all MCP servers configured and retrieves the tools they offer.
+- **Implementation**: Uses `MultiServerMCPClient` to handle server connections and tool retrieval.
+
+### MCP Configuration
+- **Functionality**: Loads server configurations from `mcp_servers.json`, resolving any environment variable placeholders.
+- **Purpose**: Ensures configurations are dynamically adapted based on the environment and working directory.
+
 ## Configuration
 
 Configurations are central to tailoring the behavior of Dharmas Claude. The `config.yaml` file allows you to define:
@@ -45,6 +56,7 @@ A quick guide to the project's structure:
 - **`llm/`**: Manages Large Language Model settings.
 - **`main.py`**: The main script to start the assistant.
 - **`tools/`**: Utility scripts and additional tools to extend functionality.
+- **`mcp/`**: Manages MCP server interactions and configurations.
 
 ## Prerequisites
 
