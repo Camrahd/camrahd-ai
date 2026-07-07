@@ -2,7 +2,7 @@
 
 llm:
  provider: openai        # openai | anthropic
- model: gpt-4o
+ model: gpt-5.5
 
 
 embeddings:
@@ -11,7 +11,7 @@ embeddings:
 
 
 chromadb:
- persist_dir: .chromadb/
+ persist_dir: .Dharma/chromadb/
  collection_name: codebase
 
 qdrant:
@@ -26,7 +26,7 @@ vector_store:
  retrieval_mode: hybrid  # dense | sparse | hybrid
 
 memory:
- db_path: .memory/memory.db
+ db_path: .Dharma/memory/memory.db
  summarize_at_tokens: 4000
  keep_last_messages: 20
 
@@ -34,3 +34,8 @@ memory:
 elasticsearch:
  url: http://localhost:9200
  index_name: codebase
+
+
+skills:
+ skills_dir: .Dharma/skills
+
