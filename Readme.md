@@ -25,6 +25,8 @@ Session: 2a1f...
 
 ## Architecture
 
+![Architecture diagram](assets/architecture.png)
+
 ```
 Dharmas_claude/
 ├── main.py                 # REPL entry point
