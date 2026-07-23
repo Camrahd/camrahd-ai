@@ -4,7 +4,7 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 import typer
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 from rich import box
 from rich.console import Console
 from rich.live import Live
@@ -27,8 +27,9 @@ from camrahd_ai.observability.logger import get_logger
 from camrahd_ai.observability.usage import tracker
 
 
-# Search for .env from the launch directory upward, never the install location.
-load_dotenv()
+# usecwd=True searches from the launch directory upward; the default would
+# search from the installed package's location instead and never find it.
+load_dotenv(find_dotenv(usecwd=True))
 load_dotenv(Path.home() / ".config" / "camrahd" / ".env")
 
 
