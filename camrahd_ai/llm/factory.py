@@ -15,7 +15,11 @@ def get_llm():
   if provider == "anthropic":
       from langchain_anthropic import ChatAnthropic
       return ChatAnthropic(model=model)
- 
+
+  if provider == "ollama":
+      from langchain_ollama import ChatOllama
+      return ChatOllama(model=model, base_url=config["llm"].get("base_url", "http://localhost:11434"))
+
   from langchain_openai import ChatOpenAI
   return ChatOpenAI(model=model)
 
@@ -28,6 +32,9 @@ def get_embedder():
   if provider == "huggingface":
       from langchain_huggingface import HuggingFaceEmbeddings
       return HuggingFaceEmbeddings(model_name=model)
+  if provider == "ollama":
+      from langchain_ollama import OllamaEmbeddings
+      return OllamaEmbeddings(model=model, base_url=config["embeddings"].get("base_url", "http://localhost:11434"))
   from langchain_openai import OpenAIEmbeddings
   return OpenAIEmbeddings(model=model)
 

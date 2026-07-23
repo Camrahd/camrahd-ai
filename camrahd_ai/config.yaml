@@ -1,12 +1,13 @@
 
 
 llm:
- provider: openai        # openai | anthropic
+ provider: openai        # openai | anthropic | ollama
  model: gpt-5.5
+ # base_url: http://localhost:11434   # only used by ollama
 
 
 embeddings:
- provider: openai             
+ provider: openai        # openai | huggingface | ollama
  model: text-embedding-3-small
 
 
