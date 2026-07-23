@@ -1,6 +1,6 @@
-# Dharmas Claude: RAG-Powered Code Assistant
+# Camrahd AI: RAG-Powered Code Assistant
 
-Welcome to Dharmas Claude, a sophisticated code assistant designed to help you interact with and navigate large codebases efficiently. It uses Retrieval-Augmented Generation (RAG) to provide smart code querying and indexing capabilities, thanks to its integration with a range of specialized retrievers and indexers.
+Welcome to Camrahd AI, a sophisticated code assistant designed to help you interact with and navigate large codebases efficiently. It uses Retrieval-Augmented Generation (RAG) to provide smart code querying and indexing capabilities, thanks to its integration with a range of specialized retrievers and indexers.
 
 ## Key Features
 
@@ -16,7 +16,7 @@ Indexers process and store code data for efficient retrieval:
 - **Semantic Qdrant Indexer**: Converts code files into embeddings, managed via QdrantVectorStore.
 
 ## MCP Integration
-Dharmas Claude connects to multiple configured MCP (Multilingual Code Processing) servers to extend its capabilities by loading additional tools.
+Camrahd AI connects to multiple configured MCP (Multilingual Code Processing) servers to extend its capabilities by loading additional tools.
 
 ### MCP Client
 - **Functionality**: Connects to all MCP servers configured and retrieves the tools they offer.
@@ -28,19 +28,19 @@ Dharmas Claude connects to multiple configured MCP (Multilingual Code Processing
 
 ## Configuration
 
-Configurations are central to tailoring the behavior of Dharmas Claude. The `config.yaml` file allows you to define:
+Configurations are central to tailoring the behavior of Camrahd AI. The `config.yaml` file allows you to define:
 - Which retriever and indexer to use.
 - Model and embedding preferences.
 - Any additional settings required for customizing your search and retrieval needs.
 
 ## Getting Started
 
-To get up and running with Dharmas Claude:
+To get up and running with Camrahd AI:
 
 1. **Launch the Assistant**
    Open your terminal and run the assistant using:
    ```sh
-   python main.py
+   camrahd
    ```
    Interact using commands like `/ask <question>` to query the codebase or `/show_semantic_index` to inspect indexed contents.
 
@@ -64,4 +64,4 @@ Prior to usage, ensure:
 - Appropriate environment variables are set for services like Qdrant.
 - Dependencies are up to date, as indicated in dependencies files (e.g., `requirements.txt`).
 
-This project is designed for developers looking to enhance their productivity when exploring and understanding complex codebases. Enjoy making your development experience smoother with Dharmas Claude!
+This project is designed for developers looking to enhance their productivity when exploring and understanding complex codebases. Enjoy making your development experience smoother with Camrahd AI!

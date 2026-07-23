@@ -6,7 +6,7 @@ from tree_sitter import Language, Parser
 from tree_sitter_languages import get_language, get_parser
 
 
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.observability.logger import get_logger
 
 
 logger = get_logger(__name__)

@@ -1,5 +1,5 @@
-from Dharmas_claude.agent.factory import build_agent
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.agent.factory import build_agent
+from camrahd_ai.observability.logger import get_logger
 
 
 logger = get_logger(__name__)

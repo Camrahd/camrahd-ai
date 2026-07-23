@@ -3,9 +3,9 @@ from langchain.agents.middleware import SummarizationMiddleware
 from pathlib import Path
 
 
-from Dharmas_claude.config import config
-from Dharmas_claude.llm.factory import get_llm
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.config import config
+from camrahd_ai.llm.factory import get_llm
+from camrahd_ai.observability.logger import get_logger
 logger = get_logger(__name__)
 
 

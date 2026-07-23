@@ -7,9 +7,9 @@ from pathlib import Path
 from langchain.tools import tool
 
 
-from Dharmas_claude.config import config
-from Dharmas_claude.skills.registry import SkillRegistry, SkillNotFoundError
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.config import config
+from camrahd_ai.skills.registry import SkillRegistry, SkillNotFoundError
+from camrahd_ai.observability.logger import get_logger
 
 
 logger = get_logger(__name__)
@@ -21,7 +21,7 @@ logger = get_logger(__name__)
 # One SkillRegistry instance is shared for the entire process lifetime.
 # It is created lazily on the first call to get_registry() — not at import time —
 # so that Path.cwd() resolves to the target project directory, not the
-# Dharmas_claude package directory.
+# camrahd_ai package directory.
 #
 # State transitions:
 #   None  ──(first call to get_registry())──►  SkillRegistry (loaded)
@@ -39,20 +39,20 @@ def get_registry() -> SkillRegistry:
 
 
    skills_dir resolution order:
-     1. Read "skills.skills_dir" from config.yaml  →  e.g. ".educosys/skills"
+     1. Read "skills.skills_dir" from config.yaml  →  e.g. ".camrahd/skills"
      2. Resolve relative to Path.cwd()             →  the target project root
-        (Dharmas_claude is invoked from the project being analysed, so cwd()
-         IS the target project, not the educosys package itself)
+        (camrahd_ai is invoked from the project being analysed, so cwd()
+         IS the target project, not the camrahd package itself)
 
 
    Example:
-     User runs Dharmas_claude from /home/user/my_project/
-     config.yaml says skills_dir: .educosys/skills
-     → skills are loaded from /home/user/my_project/.educosys/skills/
+     User runs camrahd_ai from /home/user/my_project/
+     config.yaml says skills_dir: .camrahd/skills
+     → skills are loaded from /home/user/my_project/.camrahd/skills/
    """
    global _registry
    if _registry is None:
-       skills_dir = Path.cwd() / config.get("skills", {}).get("skills_dir", ".educosys/skills")
+       skills_dir = Path.cwd() / config.get("skills", {}).get("skills_dir", ".camrahd/skills")
        _registry = SkillRegistry(skills_dir)
        _registry.load()
        logger.info(f"SkillRegistry initialized from: {skills_dir}")

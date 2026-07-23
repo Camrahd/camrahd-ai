@@ -1,6 +1,6 @@
 from langchain_mcp_adapters.client import MultiServerMCPClient
-from Dharmas_claude.mcp.mcp_config import load_mcp_configs
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.mcp.mcp_config import load_mcp_configs
+from camrahd_ai.observability.logger import get_logger
 
 
 logger = get_logger(__name__)

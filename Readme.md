@@ -1,9 +1,9 @@
-# Dharma's Claude
+# Camrahd AI
 
 A Claude Code–style AI coding agent that lives in your terminal. Built from scratch in Python to understand how agentic coding assistants actually work under the hood: code-aware retrieval, tool orchestration, persistent memory, and MCP integration.
 
 ```
-Dharmas Claude — RAG-powered code assistant
+Camrahd AI — RAG-powered code assistant
 LLM: openai / gpt-5.5
 Embedder: openai / text-embedding-3-small
 Session: 2a1f...
@@ -28,7 +28,7 @@ Session: 2a1f...
 ![Architecture diagram](assets/architecture.png)
 
 ```
-Dharmas_claude/
+camrahd_ai/
 ├── main.py                 # REPL entry point
 ├── config.py / config.yaml # Provider, RAG mode, memory settings
 ├── agent/                  # Agent factory, orchestrator, tool bindings
@@ -57,15 +57,25 @@ Dharmas_claude/
 ### Install & run
 
 ```bash
-git clone https://github.com/Camrahd/claud_code.git
-cd claud_code
-poetry install
+# The default config uses Qdrant hybrid retrieval
+pip install "camrahd-ai[qdrant]"
+# or: pip install "camrahd-ai[chroma]"   — ChromaDB backend
+# or: pip install "camrahd-ai[all]"      — every backend
 
-# Add your API keys
+# Add your API keys (also read from ~/.config/camrahd/.env)
 echo "OPENAI_API_KEY=sk-..." > .env
 
 # Run from the repo you want to index (defaults to cwd)
-poetry run Dharmas_claude
+camrahd
+```
+
+Or from source:
+
+```bash
+git clone https://github.com/Dharma41/camrahd-ai.git
+cd camrahd-ai
+poetry install --extras qdrant
+poetry run camrahd
 ```
 
 On first run, the agent indexes the current working directory and drops you into a REPL.
@@ -83,7 +93,7 @@ On first run, the agent indexes the current working directory and drops you into
 
 ## Configuration
 
-Everything lives in `Dharmas_claude/config.yaml`:
+Defaults ship with the package; override any subset in a `camrahd.yaml` in your project directory or `~/.config/camrahd/config.yaml`:
 
 ```yaml
 llm:

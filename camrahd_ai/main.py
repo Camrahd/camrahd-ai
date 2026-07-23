@@ -5,18 +5,20 @@ from rich.console import Console
 from rich.prompt import Prompt
 
 
-from Dharmas_claude.config import config
-from Dharmas_claude.context.indexers.factory import get_indexer, get_index_inspector
-from Dharmas_claude.llm.factory import get_llm, get_embedder
+from camrahd_ai.config import config
+from camrahd_ai.context.indexers.factory import get_indexer, get_index_inspector
+from camrahd_ai.llm.factory import get_llm, get_embedder
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
-from Dharmas_claude.agent.factory import build_agent
-from Dharmas_claude.memory.short_term import get_checkpointer_db_path
-from Dharmas_claude.agent.orchestrator import handle_query
-from Dharmas_claude.memory.session import get_current_session, new_session, switch_session
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.agent.factory import build_agent
+from camrahd_ai.memory.short_term import get_checkpointer_db_path
+from camrahd_ai.agent.orchestrator import handle_query
+from camrahd_ai.memory.session import get_current_session, new_session, switch_session
+from camrahd_ai.observability.logger import get_logger
 
 
-load_dotenv(Path(__file__).parent.parent / ".env")
+# Search for .env from the launch directory upward, never the install location.
+load_dotenv()
+load_dotenv(Path.home() / ".config" / "camrahd" / ".env")
 
 
 console = Console()
@@ -55,8 +57,8 @@ async def initialize(checkpointer):
 
 
 async def _run_async():
-   logger.info("Starting Dharmas new Claude")
-   console.print("\n[bold blue]Dharmas Claude[/bold blue] — RAG-powered code assistant")
+   logger.info("Starting Camrahd AI")
+   console.print("\n[bold blue]Camrahd AI[/bold blue] — RAG-powered code assistant")
 
 
    async with AsyncSqliteSaver.from_conn_string(get_checkpointer_db_path()) as checkpointer:

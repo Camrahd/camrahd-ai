@@ -1,8 +1,8 @@
 from langchain.tools import tool
 
 
-from Dharmas_claude.context.retrievers.factory import get_retriever
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.context.retrievers.factory import get_retriever
+from camrahd_ai.observability.logger import get_logger
 
 
 logger = get_logger(__name__)

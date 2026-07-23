@@ -1,12 +1,12 @@
 from langchain.agents import create_agent
 
 
-from Dharmas_claude.llm.factory import get_llm
-from Dharmas_claude.agent.tools import search_codebase
-from Dharmas_claude.observability.logger import get_logger
-from Dharmas_claude.tools.terminal_tools import run_command, run_in_directory
-from Dharmas_claude.mcp.mcp_client import get_mcp_tools
-from Dharmas_claude.skills.skill_tools import load_skill, build_skills_prompt
+from camrahd_ai.llm.factory import get_llm
+from camrahd_ai.agent.tools import search_codebase
+from camrahd_ai.observability.logger import get_logger
+from camrahd_ai.tools.terminal_tools import run_command, run_in_directory
+from camrahd_ai.mcp.mcp_client import get_mcp_tools
+from camrahd_ai.skills.skill_tools import load_skill, build_skills_prompt
 logger = get_logger(__name__)
 
 

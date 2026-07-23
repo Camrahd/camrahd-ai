@@ -2,8 +2,8 @@ import uuid
 from pathlib import Path
 
 
-from Dharmas_claude.config import config
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.config import config
+from camrahd_ai.observability.logger import get_logger
 
 
 logger = get_logger(__name__)

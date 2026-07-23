@@ -4,10 +4,10 @@ from langchain_core.documents import Document
 from qdrant_client import QdrantClient
 
 
-from Dharmas_claude.config import config
-from Dharmas_claude.context.indexers.code_parser import parse_file, get_source_files
-from Dharmas_claude.llm.factory import get_embedder
-from Dharmas_claude.observability.logger import get_logger
+from camrahd_ai.config import config
+from camrahd_ai.context.indexers.code_parser import parse_file, get_source_files
+from camrahd_ai.llm.factory import get_embedder
+from camrahd_ai.observability.logger import get_logger
 
 
 logger = get_logger(__name__)
