@@ -3,6 +3,7 @@ import chromadb
 
 from camrahd_ai.config import config
 from camrahd_ai.context.indexers.code_parser import parse_file, get_source_files
+from camrahd_ai.context.indexers.manifest import plan_reindex, save_manifest
 from camrahd_ai.llm.factory import get_embedder
 from camrahd_ai.observability.logger import get_logger
 
@@ -12,24 +13,34 @@ logger = get_logger(__name__)
 
 def index_codebase(repo_path: str) -> chromadb.Collection:
    """
-   Parse all source files in repo_path, embed each chunk and store in ChromaDB.
-   Returns the ChromaDB collection. Skips indexing if collection already has data.
+   Parse source files in repo_path, embed each chunk and store in ChromaDB.
+   Incremental: only files whose content hash changed since the last run
+   are re-embedded; chunks of deleted files are removed.
    """
    embedder = get_embedder()
    chroma_client = chromadb.PersistentClient(path=config["chromadb"]["persist_dir"])
    collection = chroma_client.get_or_create_collection(name=config["chromadb"]["collection_name"])
 
 
-   if collection.count() > 0:
-       logger.info(f"Loaded existing index with {collection.count()} chunks")
+   files = get_source_files(repo_path)
+   to_index, deleted, new_manifest = plan_reindex(repo_path, files)
+   if collection.count() == 0:
+       # Fresh (or wiped) collection — the manifest can't be trusted, index everything.
+       to_index, deleted = list(new_manifest), []
+
+
+   if not to_index and not deleted:
+       logger.info(f"Index up to date with {collection.count()} chunks")
        return collection
 
 
-   logger.info(f"Starting semantic indexing of {repo_path}")
-   files = get_source_files(repo_path)
+   logger.info(f"Semantic indexing of {repo_path}: {len(to_index)} files to embed")
+   # Drop stale chunks before re-adding, so removed/renamed blocks don't linger.
+   for filepath in deleted + to_index:
+       collection.delete(where={"source": filepath})
 
 
-   for filepath in files:
+   for filepath in to_index:
        try:
            chunks = parse_file(filepath)
        except (SyntaxError, ValueError) as e:
@@ -55,6 +66,7 @@ def index_codebase(repo_path: str) -> chromadb.Collection:
            logger.debug(f"  Indexed {chunk.type} '{chunk.name}' from {filepath}")
 
 
+   save_manifest(repo_path, new_manifest)
    logger.info(f"Semantic indexing complete. Total chunks: {collection.count()}")
    return collection
 
