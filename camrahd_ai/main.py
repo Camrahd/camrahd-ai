@@ -11,7 +11,7 @@ from camrahd_ai.llm.factory import get_llm, get_embedder
 from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from camrahd_ai.agent.factory import build_agent
 from camrahd_ai.memory.short_term import get_checkpointer_db_path
-from camrahd_ai.agent.orchestrator import handle_query
+from camrahd_ai.agent.orchestrator import stream_query
 from camrahd_ai.memory.session import get_current_session, new_session, switch_session
 from camrahd_ai.observability.logger import get_logger
 
@@ -23,6 +23,17 @@ load_dotenv(Path.home() / ".config" / "camrahd" / ".env")
 
 console = Console()
 logger = get_logger(__name__)
+
+
+async def ask(agent, question: str, session_id: str) -> None:
+   """Stream the agent's answer to the console token by token."""
+   try:
+       async for token in stream_query(agent, question, session_id):
+           console.print(token, end="", markup=False, highlight=False)
+       console.print()
+   except Exception as e:
+       logger.error(f"Agent error: {e}")
+       console.print(f"\n[red]Error:[/red] {e}")
 
 
 
@@ -76,8 +87,7 @@ async def _run_async():
                # Plain text is a question — no /ask prefix needed.
                question = user_input.strip()
                logger.info(f"Question received: {question}")
-               response = await handle_query(agent, question, session_id)
-               console.print(response)
+               await ask(agent, question, session_id)
            elif user_input.lower() in ("/exit", "/quit"):
                logger.info("Shutting down")
                console.print("[dim]Goodbye![/dim]")
@@ -86,8 +96,7 @@ async def _run_async():
                # Kept for backwards compatibility; plain text works too.
                question = user_input.removeprefix("/ask ").strip()
                logger.info(f"Ask command received: {question}")
-               response = await handle_query(agent, question, session_id)
-               console.print(response)
+               await ask(agent, question, session_id)
            elif user_input == "/new_session":
                session_id = new_session()
                console.print(f"[green]New session started: {session_id}[/green]")
