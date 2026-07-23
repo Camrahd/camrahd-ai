@@ -11,28 +11,28 @@
   <rect width="1280" height="880" fill="#f8fafc"/>
 
   <!-- Title -->
-  <text x="640" y="46" text-anchor="middle" font-size="28" font-weight="bold" fill="#0f172a">Dharma's Claude — Architecture</text>
+  <text x="640" y="46" text-anchor="middle" font-size="28" font-weight="bold" fill="#0f172a">Camrahd AI — Architecture</text>
   <text x="640" y="72" text-anchor="middle" font-size="15" fill="#64748b">A RAG-powered agentic coding assistant in the terminal</text>
 
   <!-- ===== Terminal REPL ===== -->
-  <rect x="440" y="100" width="400" height="70" rx="10" fill="#0f172a"/>
-  <text x="640" y="130" text-anchor="middle" font-size="17" font-weight="bold" fill="#f8fafc">Terminal REPL (main.py)</text>
-  <text x="640" y="152" text-anchor="middle" font-size="12" fill="#94a3b8">Rich console · /ask · /new_session · /switch · /show_index</text>
+  <rect x="360" y="100" width="560" height="70" rx="10" fill="#0f172a"/>
+  <text x="640" y="130" text-anchor="middle" font-size="17" font-weight="bold" fill="#f8fafc">Typer CLI · Rich REPL (main.py)</text>
+  <text x="640" y="152" text-anchor="middle" font-size="11" fill="#94a3b8">plain chat · streamed Markdown panels · /help /model /sessions /usage · camrahd init / --version</text>
 
-  <!-- arrow REPL -> orchestrator -->
-  <line x1="640" y1="170" x2="640" y2="212" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
-  <text x="652" y="196" font-size="12" fill="#2563eb">user query</text>
+  <!-- arrow REPL <-> orchestrator -->
+  <line x1="640" y1="170" x2="640" y2="212" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrowBlue)" marker-start="url(#arrowBlue)"/>
+  <text x="652" y="196" font-size="12" fill="#2563eb">question ↓ · streamed tokens ↑</text>
 
   <!-- ===== Agent Core ===== -->
   <rect x="380" y="216" width="520" height="150" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
   <text x="640" y="244" text-anchor="middle" font-size="17" font-weight="bold" fill="#1e3a8a">Agent Core</text>
   <rect x="405" y="260" width="220" height="84" rx="8" fill="#ffffff" stroke="#93c5fd"/>
   <text x="515" y="288" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a8a">LangGraph Orchestrator</text>
-  <text x="515" y="308" text-anchor="middle" font-size="12" fill="#475569">agent loop · tool routing</text>
+  <text x="515" y="308" text-anchor="middle" font-size="12" fill="#475569">agent loop · tool routing · astream</text>
   <text x="515" y="326" text-anchor="middle" font-size="12" fill="#475569">(agent/orchestrator.py)</text>
   <rect x="655" y="260" width="220" height="84" rx="8" fill="#ffffff" stroke="#93c5fd"/>
   <text x="765" y="288" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e3a8a">LLM Factory</text>
-  <text x="765" y="308" text-anchor="middle" font-size="12" fill="#475569">OpenAI / Anthropic</text>
+  <text x="765" y="308" text-anchor="middle" font-size="12" fill="#475569">OpenAI / Anthropic / Ollama</text>
   <text x="765" y="326" text-anchor="middle" font-size="12" fill="#475569">chat + embedding models</text>
 
   <!-- arrows out of agent core -->
@@ -51,53 +51,60 @@
   <rect x="40" y="216" width="212" height="420" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
   <text x="146" y="244" text-anchor="middle" font-size="16" font-weight="bold" fill="#14532d">Context / RAG</text>
 
-  <rect x="60" y="262" width="172" height="78" rx="8" fill="#ffffff" stroke="#86efac"/>
-  <text x="146" y="288" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">tree-sitter Parser</text>
-  <text x="146" y="306" text-anchor="middle" font-size="11" fill="#475569">chunk by classes</text>
-  <text x="146" y="322" text-anchor="middle" font-size="11" fill="#475569">&amp; functions</text>
+  <rect x="60" y="258" width="172" height="64" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="146" y="282" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">tree-sitter Parser</text>
+  <text x="146" y="300" text-anchor="middle" font-size="11" fill="#475569">chunk by classes &amp; functions</text>
 
-  <line x1="146" y1="340" x2="146" y2="368" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="146" y1="322" x2="146" y2="344" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <rect x="60" y="372" width="172" height="78" rx="8" fill="#ffffff" stroke="#86efac"/>
-  <text x="146" y="398" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">Indexers</text>
-  <text x="146" y="416" text-anchor="middle" font-size="11" fill="#475569">dense + sparse embeds</text>
-  <text x="146" y="432" text-anchor="middle" font-size="11" fill="#475569">(FastEmbed)</text>
+  <rect x="60" y="348" width="172" height="64" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="146" y="370" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">Incremental Manifest</text>
+  <text x="146" y="388" text-anchor="middle" font-size="11" fill="#475569">sha256 per file — re-embed</text>
+  <text x="146" y="402" text-anchor="middle" font-size="11" fill="#475569">only what changed</text>
 
-  <line x1="146" y1="450" x2="146" y2="478" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="146" y1="412" x2="146" y2="434" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <rect x="60" y="482" width="172" height="78" rx="8" fill="#ffffff" stroke="#86efac"/>
-  <text x="146" y="508" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">Hybrid Retriever</text>
-  <text x="146" y="526" text-anchor="middle" font-size="11" fill="#475569">dense | sparse | hybrid</text>
-  <text x="146" y="542" text-anchor="middle" font-size="11" fill="#475569">pluggable via factory</text>
+  <rect x="60" y="438" width="172" height="64" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="146" y="460" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">Indexers</text>
+  <text x="146" y="478" text-anchor="middle" font-size="11" fill="#475569">dense + sparse embeds</text>
+  <text x="146" y="492" text-anchor="middle" font-size="11" fill="#475569">(FastEmbed)</text>
 
-  <line x1="146" y1="560" x2="146" y2="588" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="146" y1="502" x2="146" y2="524" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow)"/>
 
-  <rect x="60" y="592" width="172" height="34" rx="8" fill="#166534"/>
-  <text x="146" y="614" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">Qdrant / ChromaDB</text>
+  <rect x="60" y="528" width="172" height="64" rx="8" fill="#ffffff" stroke="#86efac"/>
+  <text x="146" y="550" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">Hybrid Retriever</text>
+  <text x="146" y="568" text-anchor="middle" font-size="11" fill="#475569">dense | sparse | hybrid</text>
+  <text x="146" y="582" text-anchor="middle" font-size="11" fill="#475569">pluggable via factory</text>
+
+  <line x1="146" y1="592" x2="146" y2="596" stroke="#16a34a" stroke-width="2"/>
+
+  <rect x="60" y="596" width="172" height="30" rx="8" fill="#166534"/>
+  <text x="146" y="616" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">Qdrant / ChromaDB</text>
 
   <!-- ===== Tools (middle bottom) ===== -->
   <rect x="292" y="474" width="540" height="162" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
-  <text x="562" y="502" text-anchor="middle" font-size="16" font-weight="bold" fill="#78350f">Tools</text>
+  <text x="562" y="498" text-anchor="middle" font-size="16" font-weight="bold" fill="#78350f">Tools</text>
+  <text x="562" y="514" text-anchor="middle" font-size="11" fill="#92400e">write / exec tools gated by user approval (Allow? y/n)</text>
 
-  <rect x="312" y="518" width="118" height="98" rx="8" fill="#ffffff" stroke="#fcd34d"/>
-  <text x="371" y="548" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">Filesystem</text>
-  <text x="371" y="568" text-anchor="middle" font-size="11" fill="#475569">read / write</text>
-  <text x="371" y="584" text-anchor="middle" font-size="11" fill="#475569">files</text>
+  <rect x="312" y="524" width="118" height="92" rx="8" fill="#ffffff" stroke="#fcd34d"/>
+  <text x="371" y="550" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">Filesystem</text>
+  <text x="371" y="568" text-anchor="middle" font-size="11" fill="#475569">read / write files</text>
+  <text x="371" y="586" text-anchor="middle" font-size="11" fill="#b45309">✋ approval</text>
 
-  <rect x="442" y="518" width="118" height="98" rx="8" fill="#ffffff" stroke="#fcd34d"/>
-  <text x="501" y="548" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">Terminal</text>
-  <text x="501" y="568" text-anchor="middle" font-size="11" fill="#475569">run shell</text>
-  <text x="501" y="584" text-anchor="middle" font-size="11" fill="#475569">commands</text>
+  <rect x="442" y="524" width="118" height="92" rx="8" fill="#ffffff" stroke="#fcd34d"/>
+  <text x="501" y="550" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">Terminal</text>
+  <text x="501" y="568" text-anchor="middle" font-size="11" fill="#475569">run shell commands</text>
+  <text x="501" y="586" text-anchor="middle" font-size="11" fill="#b45309">✋ approval</text>
 
-  <rect x="572" y="518" width="118" height="98" rx="8" fill="#ffffff" stroke="#fcd34d"/>
-  <text x="631" y="548" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">MCP Client</text>
+  <rect x="572" y="524" width="118" height="92" rx="8" fill="#ffffff" stroke="#fcd34d"/>
+  <text x="631" y="550" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">MCP Client</text>
   <text x="631" y="568" text-anchor="middle" font-size="11" fill="#475569">external tool</text>
-  <text x="631" y="584" text-anchor="middle" font-size="11" fill="#475569">servers</text>
+  <text x="631" y="586" text-anchor="middle" font-size="11" fill="#475569">servers</text>
 
-  <rect x="702" y="518" width="118" height="98" rx="8" fill="#ffffff" stroke="#fcd34d"/>
-  <text x="761" y="548" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">Skills</text>
+  <rect x="702" y="524" width="118" height="92" rx="8" fill="#ffffff" stroke="#fcd34d"/>
+  <text x="761" y="550" text-anchor="middle" font-size="13" font-weight="bold" fill="#78350f">Skills</text>
   <text x="761" y="568" text-anchor="middle" font-size="11" fill="#475569">registry of</text>
-  <text x="761" y="584" text-anchor="middle" font-size="11" fill="#475569">reusable skills</text>
+  <text x="761" y="586" text-anchor="middle" font-size="11" fill="#475569">reusable skills</text>
 
   <!-- MCP servers external -->
   <line x1="631" y1="616" x2="631" y2="666" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
@@ -118,18 +125,23 @@
   <text x="1142" y="566" text-anchor="middle" font-size="11" fill="#475569">compresses history</text>
   <text x="1142" y="582" text-anchor="middle" font-size="11" fill="#475569">past 4k tokens</text>
 
+  <!-- ===== Observability ===== -->
+  <rect x="872" y="660" width="368" height="54" rx="10" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="1056" y="682" text-anchor="middle" font-size="14" font-weight="bold" fill="#075985">Observability</text>
+  <text x="1056" y="700" text-anchor="middle" font-size="11" fill="#475569">rotating .camrahd/camrahd.log · token &amp; cost tracker (/usage)</text>
+
   <!-- LLM providers external -->
   <line x1="765" y1="260" x2="765" y2="180" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
   <rect x="920" y="120" width="300" height="60" rx="8" fill="#e2e8f0" stroke="#94a3b8" stroke-dasharray="6 4"/>
   <text x="1070" y="145" text-anchor="middle" font-size="13" font-weight="bold" fill="#334155">LLM Providers</text>
-  <text x="1070" y="165" text-anchor="middle" font-size="12" fill="#475569">OpenAI · Anthropic</text>
+  <text x="1070" y="165" text-anchor="middle" font-size="12" fill="#475569">OpenAI · Anthropic · Ollama (local, no API key)</text>
   <line x1="875" y1="260" x2="955" y2="184" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow)"/>
 
   <!-- Query flow footer -->
   <rect x="40" y="760" width="1200" height="80" rx="10" fill="#0f172a"/>
   <text x="640" y="792" text-anchor="middle" font-size="14" font-weight="bold" fill="#f8fafc">Query flow</text>
-  <text x="640" y="818" text-anchor="middle" font-size="13" fill="#cbd5e1">query  →  hybrid retrieval over indexed codebase  →  context into prompt  →  LangGraph agent loop with tools  →  response, checkpointed to session</text>
+  <text x="640" y="818" text-anchor="middle" font-size="13" fill="#cbd5e1">question  →  incremental hybrid retrieval  →  LangGraph agent loop (approval-gated tools)  →  streamed Markdown answer  →  checkpointed + usage tracked</text>
 
   <!-- Tech footer -->
-  <text x="640" y="866" text-anchor="middle" font-size="12" fill="#94a3b8">Python · LangChain / LangGraph · Qdrant · ChromaDB · tree-sitter · FastEmbed · MCP · SQLite · Rich</text>
+  <text x="640" y="866" text-anchor="middle" font-size="12" fill="#94a3b8">Python · Typer · Rich · LangChain / LangGraph · Qdrant · ChromaDB · tree-sitter · FastEmbed · Ollama · MCP · SQLite · pytest + GitHub Actions</text>
 </svg>
