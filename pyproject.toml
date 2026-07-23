@@ -56,7 +56,7 @@ all = [
 ]
 
 [project.urls]
-Repository = "https://github.com/Dharma41/camrahd-ai"
+Repository = "https://github.com/Camrahd/camrahd-ai"
 
 [project.scripts]
 camrahd = "camrahd_ai.main:run"
