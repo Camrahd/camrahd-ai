@@ -4,6 +4,7 @@ from langchain_core.messages import AIMessageChunk
 
 from camrahd_ai.agent.factory import build_agent
 from camrahd_ai.observability.logger import get_logger
+from camrahd_ai.observability.usage import tracker
 
 
 logger = get_logger(__name__)
@@ -32,6 +33,7 @@ async def stream_query(agent, question: str, thread_id: str) -> AsyncIterator[st
       stream_mode="messages",
   ):
       if isinstance(chunk, AIMessageChunk):
+          tracker.add_from_chunk(chunk)
           text = _chunk_text(chunk)
           if text:
               yield text

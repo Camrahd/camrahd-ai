@@ -1,5 +1,9 @@
 import asyncio
+import shutil
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
+
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.live import Live
@@ -16,6 +20,7 @@ from camrahd_ai.memory.short_term import get_checkpointer_db_path
 from camrahd_ai.agent.orchestrator import stream_query
 from camrahd_ai.memory.session import get_current_session, list_sessions, new_session, switch_session
 from camrahd_ai.observability.logger import get_logger
+from camrahd_ai.observability.usage import tracker
 
 
 # Search for .env from the launch directory upward, never the install location.
@@ -35,9 +40,14 @@ async def ask(agent, question: str, session_id: str) -> None:
            async for token in stream_query(agent, question, session_id):
                buffer += token
                live.update(Markdown(buffer))
+   except (KeyboardInterrupt, asyncio.CancelledError):
+       console.print("\n[dim]Interrupted.[/dim]")
+       return
    except Exception as e:
        logger.error(f"Agent error: {e}")
        console.print(f"\n[red]Error:[/red] {e}")
+       return
+   console.print(f"[dim]{tracker.summary()}[/dim]")
 
 
 def print_help() -> None:
@@ -50,6 +60,7 @@ def print_help() -> None:
    console.print("  [bold]/switch <session_id>[/bold]     — resume a past session")
    console.print("  [bold]/session[/bold]                 — show current session id")
    console.print("  [bold]/model [name][/bold]            — show or switch the LLM model")
+   console.print("  [bold]/usage[/bold]                   — show session token usage")
    console.print("  [bold]/exit[/bold]                    — quit")
 
 
@@ -95,7 +106,11 @@ async def _run_async():
 
 
        while True:
-           user_input = Prompt.ask("[bold green]>[/bold green]")
+           try:
+               user_input = Prompt.ask("[bold green]>[/bold green]")
+           except (KeyboardInterrupt, EOFError):
+               console.print("\n[dim]Goodbye![/dim]")
+               break
 
 
            if not user_input.strip():
@@ -145,6 +160,8 @@ async def _run_async():
                console.print(f"[green]Switched to session: {session_id}[/green]")
            elif user_input == "/session":
                console.print(f"[dim]Current session: {session_id}[/dim]")
+           elif user_input == "/usage":
+               console.print(f"[dim]Session usage — {tracker.summary()}[/dim]")
            elif user_input == "/show_index":
                logger.info("Showing index")
                get_index_inspector()(index)
@@ -154,8 +171,52 @@ async def _run_async():
                print_help()
 
 
+def _get_version() -> str:
+   try:
+       return version("camrahd-ai")
+   except PackageNotFoundError:
+       return "0.0.0-dev"
+
+
+cli = typer.Typer(add_completion=False, invoke_without_command=True, no_args_is_help=False)
+
+
+@cli.callback()
+def main(
+   ctx: typer.Context,
+   show_version: bool = typer.Option(False, "--version", "-V", help="Print version and exit."),
+):
+   """Camrahd AI — RAG-powered terminal code assistant."""
+   if show_version:
+       console.print(f"camrahd {_get_version()}")
+       raise typer.Exit()
+   if ctx.invoked_subcommand is None:
+       chat()
+
+
+@cli.command()
+def chat():
+   """Start the interactive chat REPL (default)."""
+   try:
+       asyncio.run(_run_async())
+   except KeyboardInterrupt:
+       console.print("\n[dim]Goodbye![/dim]")
+
+
+@cli.command()
+def init():
+   """Create a starter camrahd.yaml config in the current directory."""
+   target = Path.cwd() / "camrahd.yaml"
+   if target.exists():
+       console.print(f"[yellow]{target} already exists — leaving it untouched.[/yellow]")
+       raise typer.Exit(code=1)
+   shutil.copy(Path(__file__).parent / "config.yaml", target)
+   console.print(f"[green]Created {target}[/green]")
+   console.print("[dim]Edit it to pick your provider/model, and set OPENAI_API_KEY or ANTHROPIC_API_KEY in .env[/dim]")
+
+
 def run():
-   asyncio.run(_run_async())
+   cli()
 
 
 
