@@ -39,3 +39,7 @@ elasticsearch:
 skills:
  skills_dir: .camrahd/skills
 
+
+tools:
+ require_approval: true   # ask before the agent runs shell commands or writes/deletes files
+

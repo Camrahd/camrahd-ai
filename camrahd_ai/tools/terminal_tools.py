@@ -2,6 +2,8 @@ import subprocess
 import os
 from langchain.tools import tool
 
+from camrahd_ai.tools.approval import DENIED, request_approval
+
 
 _BLOCKED_COMMANDS = {"rm -rf /", "mkfs", "dd if=", ":(){:|:&};:"}
 _TIMEOUT_SECONDS = 30
@@ -29,6 +31,8 @@ def run_command(command: str) -> str:
        return "Error: command cannot be empty"
    if _is_blocked(command):
        return "Error: command is not allowed for safety reasons"
+   if not request_approval(f"run shell command: {command}"):
+       return DENIED
    try:
        result = subprocess.run(
            command,
@@ -57,6 +61,8 @@ def run_in_directory(command: str, directory: str) -> str:
        return f"Error: path is not a directory: {directory}"
    if _is_blocked(command):
        return "Error: command is not allowed for safety reasons"
+   if not request_approval(f"run shell command in {directory}: {command}"):
+       return DENIED
    try:
        result = subprocess.run(
            command,

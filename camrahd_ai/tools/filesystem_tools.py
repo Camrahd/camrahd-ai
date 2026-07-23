@@ -1,6 +1,8 @@
 import os
 from langchain.tools import tool
 
+from camrahd_ai.tools.approval import DENIED, request_approval
+
 
 _MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024  # 10 MB
 
@@ -33,6 +35,8 @@ def write_file(file_path: str, content: str) -> str:
    """Write content to a file, creating it and any parent directories if needed."""
    if not file_path or not file_path.strip():
        return "Error: file path cannot be empty"
+   if not request_approval(f"write file: {file_path} ({len(content)} chars)"):
+       return DENIED
    try:
        if os.path.dirname(file_path):
            os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -56,6 +60,8 @@ def append_file(file_path: str, content: str) -> str:
        return f"Error: file not found: {file_path}"
    if not os.path.isfile(file_path):
        return f"Error: path is not a file: {file_path}"
+   if not request_approval(f"append to file: {file_path} ({len(content)} chars)"):
+       return DENIED
    try:
        with open(file_path, "a", encoding="utf-8") as f:
            f.write(content)
@@ -75,6 +81,8 @@ def delete_file(file_path: str) -> str:
        return f"Error: file not found: {file_path}"
    if not os.path.isfile(file_path):
        return f"Error: path is not a file (use a directory tool for directories): {file_path}"
+   if not request_approval(f"delete file: {file_path}"):
+       return DENIED
    try:
        os.remove(file_path)
        return f"Deleted {file_path}"
