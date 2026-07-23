@@ -1,6 +1,6 @@
 [project]
 name = "camrahd-ai"
-version = "0.1.0"
+version = "0.2.0"
 description = "RAG-powered terminal code assistant: code-aware retrieval, agentic tools, persistent sessions, and MCP integration."
 authors = [
     {name = "Dharma41",email = "dharmendrareddy2000@gmail.com"}

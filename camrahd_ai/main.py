@@ -217,7 +217,12 @@ def _get_version() -> str:
        return "0.0.0-dev"
 
 
-cli = typer.Typer(add_completion=False, invoke_without_command=True, no_args_is_help=False)
+cli = typer.Typer(
+   add_completion=False,
+   invoke_without_command=True,
+   no_args_is_help=False,
+   pretty_exceptions_enable=False,
+)
 
 
 @cli.callback()
