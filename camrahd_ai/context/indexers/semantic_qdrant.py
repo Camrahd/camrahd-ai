@@ -28,7 +28,15 @@ def index_codebase(repo_path: str) -> QdrantVectorStore:
 
    # Check if collection already has data
    client = QdrantClient(url=url, api_key=api_key)
-   existing = [c.name for c in client.get_collections().collections]
+   try:
+       existing = [c.name for c in client.get_collections().collections]
+   except Exception as e:
+       raise SystemExit(
+           f"Could not reach a Qdrant server at {url or 'http://localhost:6333'} ({e.__class__.__name__}).\n"
+           "Either start one:  docker run -d -p 6333:6333 qdrant/qdrant\n"
+           "or point QDRANT_URL at your instance in .env,\n"
+           "or switch vector_store.provider to 'chromadb' in camrahd.yaml."
+       ) from e
    if collection_name in existing:
        info = client.get_collection(collection_name)
        if info.points_count > 0:

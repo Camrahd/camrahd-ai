@@ -5,6 +5,15 @@
 # Vector store data
 .chromadb/
 
+# Runtime data (sessions, memory, index manifest)
+.camrahd/
+
+# Build artifacts
+dist/
+
+# macOS
+.DS_Store
+
 
 # Python
 __pycache__/
