@@ -5,10 +5,14 @@ from pathlib import Path
 
 import typer
 from dotenv import load_dotenv
+from rich import box
 from rich.console import Console
 from rich.live import Live
 from rich.markdown import Markdown
+from rich.panel import Panel
 from rich.prompt import Prompt
+from rich.spinner import Spinner
+from rich.table import Table
 
 
 from camrahd_ai.config import config
@@ -32,14 +36,26 @@ console = Console()
 logger = get_logger(__name__)
 
 
+def _answer_panel(buffer: str) -> Panel:
+   return Panel(
+       Markdown(buffer),
+       title="[bold blue]Camrahd[/bold blue]",
+       title_align="left",
+       border_style="blue",
+       box=box.ROUNDED,
+       padding=(0, 1),
+   )
+
+
 async def ask(agent, question: str, session_id: str) -> None:
-   """Stream the agent's answer, rendering it live as Markdown."""
+   """Stream the agent's answer into a live Markdown panel."""
    buffer = ""
    try:
        with Live(console=console, refresh_per_second=8, vertical_overflow="visible") as live:
+           live.update(Spinner("dots", text="[dim]Thinking…[/dim]", style="blue"))
            async for token in stream_query(agent, question, session_id):
                buffer += token
-               live.update(Markdown(buffer))
+               live.update(_answer_panel(buffer))
    except (KeyboardInterrupt, asyncio.CancelledError):
        console.print("\n[dim]Interrupted.[/dim]")
        return
@@ -47,21 +63,30 @@ async def ask(agent, question: str, session_id: str) -> None:
        logger.error(f"Agent error: {e}")
        console.print(f"\n[red]Error:[/red] {e}")
        return
-   console.print(f"[dim]{tracker.summary()}[/dim]")
+   console.print(f"[dim]{tracker.summary()}[/dim]", justify="right")
+
+
+_COMMANDS = [
+   ("<question>", "just type to ask about the codebase"),
+   ("/help", "show this help"),
+   ("/show_index", "show all chunks in the index"),
+   ("/new_session", "start a fresh conversation"),
+   ("/sessions", "list all past sessions"),
+   ("/switch <session_id>", "resume a past session"),
+   ("/session", "show current session id"),
+   ("/model \\[name]", "show or switch the LLM model"),
+   ("/usage", "show session token usage"),
+   ("/exit", "quit"),
+]
 
 
 def print_help() -> None:
-   console.print("[bold]Commands[/bold]")
-   console.print("  [bold]<question>[/bold]               — just type to ask about the codebase")
-   console.print("  [bold]/help[/bold]                    — show this help")
-   console.print("  [bold]/show_index[/bold]              — show all chunks in the index")
-   console.print("  [bold]/new_session[/bold]             — start a fresh conversation")
-   console.print("  [bold]/sessions[/bold]                — list all past sessions")
-   console.print("  [bold]/switch <session_id>[/bold]     — resume a past session")
-   console.print("  [bold]/session[/bold]                 — show current session id")
-   console.print("  [bold]/model [name][/bold]            — show or switch the LLM model")
-   console.print("  [bold]/usage[/bold]                   — show session token usage")
-   console.print("  [bold]/exit[/bold]                    — quit")
+   table = Table(title="Commands", box=box.ROUNDED, border_style="dim", title_style="bold")
+   table.add_column("Command", style="bold cyan", no_wrap=True)
+   table.add_column("Description")
+   for command, description in _COMMANDS:
+       table.add_row(command, description)
+   console.print(table)
 
 
 
@@ -69,8 +94,27 @@ def print_help() -> None:
 def get_or_create_index():
    repo_path = str(Path.cwd())
    logger.info(f"Checking index for: {repo_path}")
-   console.print(f"[dim]Checking index for {repo_path}...[/dim]")
-   return get_indexer()(repo_path)
+   with console.status(f"[dim]Indexing {repo_path}…[/dim]", spinner="dots"):
+       return get_indexer()(repo_path)
+
+
+def print_banner(session_id: str, repo_path: str) -> None:
+   info = Table.grid(padding=(0, 2))
+   info.add_column(style="bold dim", no_wrap=True)
+   info.add_column()
+   info.add_row("LLM", f"{config['llm']['provider']} / {config['llm']['model']}")
+   info.add_row("Embedder", f"{config['embeddings']['provider']} / {config['embeddings']['model']}")
+   info.add_row("Repo", repo_path)
+   info.add_row("Session", session_id)
+   console.print(Panel(
+       info,
+       title=f"[bold blue]Camrahd AI[/bold blue] [dim]v{_get_version()}[/dim]",
+       subtitle="[green]✓ ready[/green]",
+       border_style="blue",
+       box=box.ROUNDED,
+       expand=False,
+   ))
+   console.print("[dim]Type a question, or /help for commands.[/dim]")
 
 
 
@@ -79,17 +123,10 @@ async def initialize(checkpointer):
    """Bootstrap LLM, embedder, index, MCP tools, and session before the REPL starts."""
    llm = get_llm()
    embedder = get_embedder()
-   console.print(f"[dim]LLM: {config['llm']['provider']} / {config['llm']['model']}[/dim]")
-   console.print(f"[dim]Embedder: {config['embeddings']['provider']} / {config['embeddings']['model']}[/dim]")
-
-
-
-
    index = get_or_create_index()
    agent = await build_agent(checkpointer)
    session_id = get_current_session()
-   console.print(f"[dim]Session: {session_id}[/dim]")
-   console.print(f"[green]✓ Ready[/green]\n")
+   print_banner(session_id, str(Path.cwd()))
    return llm, embedder, index, agent, session_id
 
 
@@ -97,17 +134,15 @@ async def initialize(checkpointer):
 
 async def _run_async():
    logger.info("Starting Camrahd AI")
-   console.print("\n[bold blue]Camrahd AI[/bold blue] — RAG-powered code assistant")
 
 
    async with AsyncSqliteSaver.from_conn_string(get_checkpointer_db_path()) as checkpointer:
        llm, embedder, index, agent, session_id = await initialize(checkpointer)
-       console.print("Just type a question, or [bold]'/exit'[/bold] to quit\n")
 
 
        while True:
            try:
-               user_input = Prompt.ask("[bold green]>[/bold green]")
+               user_input = Prompt.ask("\n[bold cyan]❯[/bold cyan]")
            except (KeyboardInterrupt, EOFError):
                console.print("\n[dim]Goodbye![/dim]")
                break
@@ -138,9 +173,13 @@ async def _run_async():
                sessions = list_sessions()
                if not sessions:
                    console.print("[dim]No past sessions found.[/dim]")
-               for sid in sessions:
-                   marker = " [green](current)[/green]" if sid == session_id else ""
-                   console.print(f"  {sid}{marker}")
+               else:
+                   table = Table(title="Sessions", box=box.ROUNDED, border_style="dim", title_style="bold")
+                   table.add_column("Session id", style="cyan")
+                   table.add_column("")
+                   for sid in sessions:
+                       table.add_row(sid, "[green]current[/green]" if sid == session_id else "")
+                   console.print(table)
            elif user_input.startswith("/model"):
                parts = user_input.split(maxsplit=2)
                if len(parts) == 1:
