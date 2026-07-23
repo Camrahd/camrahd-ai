@@ -2,6 +2,8 @@ import asyncio
 from pathlib import Path
 from dotenv import load_dotenv
 from rich.console import Console
+from rich.live import Live
+from rich.markdown import Markdown
 from rich.prompt import Prompt
 
 
@@ -12,7 +14,7 @@ from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from camrahd_ai.agent.factory import build_agent
 from camrahd_ai.memory.short_term import get_checkpointer_db_path
 from camrahd_ai.agent.orchestrator import stream_query
-from camrahd_ai.memory.session import get_current_session, new_session, switch_session
+from camrahd_ai.memory.session import get_current_session, list_sessions, new_session, switch_session
 from camrahd_ai.observability.logger import get_logger
 
 
@@ -26,14 +28,29 @@ logger = get_logger(__name__)
 
 
 async def ask(agent, question: str, session_id: str) -> None:
-   """Stream the agent's answer to the console token by token."""
+   """Stream the agent's answer, rendering it live as Markdown."""
+   buffer = ""
    try:
-       async for token in stream_query(agent, question, session_id):
-           console.print(token, end="", markup=False, highlight=False)
-       console.print()
+       with Live(console=console, refresh_per_second=8, vertical_overflow="visible") as live:
+           async for token in stream_query(agent, question, session_id):
+               buffer += token
+               live.update(Markdown(buffer))
    except Exception as e:
        logger.error(f"Agent error: {e}")
        console.print(f"\n[red]Error:[/red] {e}")
+
+
+def print_help() -> None:
+   console.print("[bold]Commands[/bold]")
+   console.print("  [bold]<question>[/bold]               — just type to ask about the codebase")
+   console.print("  [bold]/help[/bold]                    — show this help")
+   console.print("  [bold]/show_index[/bold]              — show all chunks in the index")
+   console.print("  [bold]/new_session[/bold]             — start a fresh conversation")
+   console.print("  [bold]/sessions[/bold]                — list all past sessions")
+   console.print("  [bold]/switch <session_id>[/bold]     — resume a past session")
+   console.print("  [bold]/session[/bold]                 — show current session id")
+   console.print("  [bold]/model [name][/bold]            — show or switch the LLM model")
+   console.print("  [bold]/exit[/bold]                    — quit")
 
 
 
@@ -97,9 +114,31 @@ async def _run_async():
                question = user_input.removeprefix("/ask ").strip()
                logger.info(f"Ask command received: {question}")
                await ask(agent, question, session_id)
+           elif user_input == "/help":
+               print_help()
            elif user_input == "/new_session":
                session_id = new_session()
                console.print(f"[green]New session started: {session_id}[/green]")
+           elif user_input == "/sessions":
+               sessions = list_sessions()
+               if not sessions:
+                   console.print("[dim]No past sessions found.[/dim]")
+               for sid in sessions:
+                   marker = " [green](current)[/green]" if sid == session_id else ""
+                   console.print(f"  {sid}{marker}")
+           elif user_input.startswith("/model"):
+               parts = user_input.split(maxsplit=2)
+               if len(parts) == 1:
+                   console.print(f"[dim]Current model: {config['llm']['provider']} / {config['llm']['model']}[/dim]")
+               else:
+                   # /model <name> or /model <provider> <name>
+                   if len(parts) == 3:
+                       config["llm"]["provider"] = parts[1]
+                       config["llm"]["model"] = parts[2]
+                   else:
+                       config["llm"]["model"] = parts[1]
+                   agent = await build_agent(checkpointer)
+                   console.print(f"[green]Switched to {config['llm']['provider']} / {config['llm']['model']}[/green]")
            elif user_input.startswith("/switch "):
                target = user_input.removeprefix("/switch ").strip()
                session_id = switch_session(target)
@@ -111,12 +150,8 @@ async def _run_async():
                get_index_inspector()(index)
            else:
                logger.warning(f"Unknown command received: {user_input}")
-               console.print("[yellow]Unknown command. Try:[/yellow]")
-               console.print("  [bold]<question>[/bold]               — just type to ask about the codebase")
-               console.print("  [bold]/show_index[/bold]              — show all chunks in the index")
-               console.print("  [bold]/new_session[/bold]             — start a fresh conversation")
-               console.print("  [bold]/switch <session_id>[/bold]     — resume a past session")
-               console.print("  [bold]/session[/bold]                 — show current session id")
+               console.print("[yellow]Unknown command.[/yellow]")
+               print_help()
 
 
 def run():

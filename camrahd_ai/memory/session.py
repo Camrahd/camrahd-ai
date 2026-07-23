@@ -31,6 +31,22 @@ def new_session() -> str:
    return session_id
 
 
+def list_sessions() -> list[str]:
+   """Return all session ids that have checkpoints in the memory database."""
+   import sqlite3
+
+   db_path = Path(config["memory"]["db_path"])
+   if not db_path.exists():
+       return []
+   try:
+       with sqlite3.connect(db_path) as conn:
+           rows = conn.execute("SELECT DISTINCT thread_id FROM checkpoints").fetchall()
+       return [row[0] for row in rows]
+   except sqlite3.Error as e:
+       logger.warning(f"Could not list sessions: {e}")
+       return []
+
+
 def switch_session(session_id: str) -> str:
    session_file = _session_file()
    session_file.write_text(session_id)
