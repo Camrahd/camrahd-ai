@@ -44,3 +44,8 @@ skills:
 tools:
  require_approval: true   # ask before the agent runs shell commands or writes/deletes files
 
+
+logging:
+ file: .camrahd/camrahd.log
+ level: DEBUG             # level written to the log file for camrahd loggers
+
